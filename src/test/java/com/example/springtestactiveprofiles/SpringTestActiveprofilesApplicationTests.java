@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -25,11 +23,19 @@ class SpringTestActiveprofilesApplicationTests {
     // https://youtrack.jetbrains.com/issue/IDEA-308562
     // the folded value should display the values from application-test.properties
     // since @ActiveProfiles is present
-    
+
     @Value("${foo.bar}")
     String bar;
     @Value("${foo.buzz}")
     String buzz;
+
+    // should be not available - ok
+    @Autowired(required = false)
+    private DevComponet devComponent;
+    // should be available - ok
+    @Autowired
+    private TestComponent testComponent;
+
 
     @Test
     void checkThatProfileSpecificComponentIsHere() {
@@ -44,5 +50,14 @@ class SpringTestActiveprofilesApplicationTests {
     @Test
     void checkCorrectBuzzProperty() {
         assertEquals(buzz,"buzz from test/application-test.properties");
+    }
+
+    @Test
+    void checkComponentsFromDevProfileAreNotPresent() {
+        assertNull(devComponent);
+    }
+    @Test
+    void checkComponentsFromTestProfileArePresent() {
+        assertNotNull(testComponent);
     }
 }
